@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Facebook Video Downloader</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: radial-gradient(circle at top, #1a0000 0%, #000 60%);
+    min-height: 100vh;
+    color: #f5f5f5;
+}
+
+.main-card {
+    background: #0b0b0b;
+    border-radius: 22px;
+    border: 2px solid #ff0000;
+    box-shadow: 0 0 30px rgba(255,0,0,0.4);
+}
+
+.down-input {
+    background: #000;
+    color: #fff;
+    border: 1px solid #333;
+}
+
+.down-input::placeholder { color: #777; }
+
+.down-input:focus {
+    border-color: red;
+    box-shadow: 0 0 10px red;
+}
+
+.custom-btn {
+    background: linear-gradient(90deg, #ff0000, #7a0000);
+    border-radius: 999px;
+    font-weight: bold;
+    padding: 0.8rem;
+    box-shadow: 0 0 15px red;
+}
+
+.custom-btn:hover {
+    filter: brightness(1.2);
+}
+
+.download-link-btn {
+    background: linear-gradient(90deg, #ff0000, #ff3c00);
+    padding: 0.6rem 1.5rem;
+    border-radius: 999px;
+    box-shadow: 0 0 12px red;
+}
+</style>
+</head>
+
+<body class="flex items-center justify-center p-6">
+
+<div class="main-card w-full max-w-md p-6 relative">
+
+    <!-- Icon -->
+    <div class="w-20 h-20 rounded-full bg-gradient-to-b from-red-700 to-black mx-auto -mt-16 flex items-center justify-center border-4 border-black shadow-lg">
+        ⬇️
+    </div>
+
+    <h2 class="text-2xl font-bold text-center mt-4 text-red-600">Facebook Video Downloader</h2>
+    <p class="text-gray-300 text-center mb-4">Paste any public Facebook video link</p>
+
+    <form id="downloadForm" class="flex flex-col gap-3">
+        <input id="fburl" type="url" required placeholder="Paste Facebook video URL..."
+            class="down-input w-full py-3 px-4 rounded-lg focus:outline-none">
+
+        <button class="custom-btn text-white flex justify-center items-center gap-2">
+            ⬇️ Download
+        </button>
+    </form>
+
+    <!-- Error -->
+    <div id="errorBox" class="hidden mt-3 p-2 text-center bg-red-950 text-red-400 border border-red-700 rounded"></div>
+
+    <!-- Result -->
+    <div id="result" class="hidden mt-4 bg-black border border-red-700 p-3 rounded-xl">
+        <video id="videoPlayer" controls class="w-full rounded bg-black"></video>
+
+        <div class="flex justify-between items-center mt-2">
+            <span id="quality" class="text-sm text-gray-300"></span>
+            <a id="downloadBtn" class="download-link-btn text-white">⬇️ Save</a>
+        </div>
+    </div>
+
+    <div class="mt-4 text-center">
+        <a href="https://whatsapp.com/channel/0029VbBhNn1KgsNr47ZTsg1C"
+           class="text-red-500 underline" target="_blank">
+            Join — Shadow Cyber Ops
+        </a>
+    </div>
+
+</div>
+
+<script>
+const form = document.getElementById("downloadForm");
+const errorBox = document.getElementById("errorBox");
+const result = document.getElementById("result");
+
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    errorBox.classList.add("hidden");
+    result.classList.add("hidden");
+
+    const url = document.getElementById("fburl").value.trim();
+    if (!url) return;
+
+    try {
+        const api = "https://facebook-downloader.apis-bj-devs.workers.dev/?url=" + encodeURIComponent(url);
+        const res = await fetch(api);
+        const data = await res.json();
+
+        if (!data.status) throw new Error("Invalid Facebook URL");
+
+        document.getElementById("videoPlayer").src = data.data.url;
+        document.getElementById("quality").innerText = "Quality: " + data.data.quality;
+        document.getElementById("downloadBtn").href = data.data.url;
+
+        result.classList.remove("hidden");
+
+    } catch (err) {
+        errorBox.innerText = "⚠️ Failed to fetch video. Check the link or API.";
+        errorBox.classList.remove("hidden");
+    }
+});
+</script>
+
+</body>
+</html>
