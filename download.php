@@ -22,4 +22,23 @@ if (isset($_GET['url'])) {
 } else {
     echo "❌ অবৈধ ডাউনলোড URL।";
 }
+$videoData = null;
+$error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fburl'])) {
+    $url = trim($_POST['fburl']);
+    $api = 'https://facebook-downloader.apis-bj-devs.workers.dev/?url=' . urlencode($url);
+
+    $response = @file_get_contents($api);
+    if ($response !== false) {
+        $json = json_decode($response, true);
+        if ($json !== null && isset($json['status']) && $json['status'] === true && isset($json['data'])) {
+            $videoData = $json['data'];
+        } else {
+            $error = "⚠️ Video download failed. Please provide a valid URL or there might be an issue with the API.";
+        }
+    } else {
+        $error = "❌ Failed to fetch data from the API. Please check your network connection or the API URL.";
+    }
+}
 ?>
