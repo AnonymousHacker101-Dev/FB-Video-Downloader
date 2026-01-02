@@ -114,7 +114,8 @@ form.addEventListener("submit", async (e) => {
     if (!url) return;
 
     try {
-        const api = "https://api.douglas.codes/api/fbdownload?url=" + encodeURIComponent(url);        const res = await fetch(api);
+        const api = "https://facebook-downloader.apis-bj-devs.workers.dev/?url=" + encodeURIComponent(url);   
+        const res = await fetch(api);
         const data = await res.json();
 
         if (!data.status) throw new Error("Invalid Facebook URL");
